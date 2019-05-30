@@ -21,13 +21,13 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'role' => 'required|integer',
+            'role_id' => 'required|integer',
             'password' => 'required|string|confirmed'
         ]);
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
+            'role_id' => $request->role_id,
             'password' => bcrypt($request->password)
         ]);
         $user->save();
@@ -70,7 +70,7 @@ class AuthController extends Controller
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()
-        ]);
+            ],200);
     }
   
     /**
@@ -83,7 +83,7 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
         return response()->json([
             'message' => 'Successfully logged out'
-        ]);
+        ],200);
     }
   
     /**
@@ -93,6 +93,14 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        $user = $request->user();
+        
+        return response()->json([
+            'id' => $request->user()->id,
+            'name' => $request->user()->name,
+            'email' => $request->user()->email,
+            'role_id' => $request->user()->role_id,
+            'role_name' => $request->user()->role->name
+        ], 201);
     }
 }

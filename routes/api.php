@@ -27,7 +27,18 @@ Route::group([
     Route::group([
       'middleware' => 'auth:api'
     ], function() {
+        //User
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
+        //Category
+        Route::get('categories','CategoryController@list');
+        Route::get('category/get/{id}','CategoryController@get');
+        Route::post('category/create','CategoryController@create');
+        Route::put('category/update/{id}','CategoryController@update');
+        //Teacher
+        Route::get('teachers','TeacherController@list');
+        Route::get('teacher/get/{id}','TeacherController@get');
+        Route::post('teacher/create','TeacherController@create');
+        Route::put('teacher/update/{id}','TeacherController@update');
     });
 });
