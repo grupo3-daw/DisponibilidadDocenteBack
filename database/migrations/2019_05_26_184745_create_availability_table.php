@@ -13,7 +13,7 @@ class CreateAvailabilityTable extends Migration
      */
     public function up()
     {
-        Schema::create('avaialabilities', function (Blueprint $table) {
+        Schema::create('availabilities', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('day');
             $table->integer('hour');

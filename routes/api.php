@@ -45,6 +45,6 @@ Route::group([
         Route::put('teacher/update/{id}','TeacherController@update'); //stand by
         //Availability
         Route::post('availability/create','AvailabilityController@create');
-        Route::get('availability/teacher/{id}','AvailabilityController@get');
+        Route::get('availability/teacher/get/{id}','AvailabilityController@get');
     });
 });
