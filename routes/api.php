@@ -23,6 +23,9 @@ Route::group([
 ], function () {
     Route::post('login', 'AuthController@login');
     Route::post('signup', 'AuthController@signup');
+    
+    // Ruta para eliminar a un profesor
+    Route::delete('delteacher','TeacherController@delteacher');
   
     Route::group([
       'middleware' => 'auth:api'

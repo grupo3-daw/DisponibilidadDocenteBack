@@ -103,4 +103,5 @@ class AuthController extends Controller
             'role_name' => $request->user()->role->name
         ], 201);
     }
+   
 }
