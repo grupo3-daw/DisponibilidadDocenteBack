@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Teacher extends Model
 {
+    protected $fillable = [
+        'user_id', 'category_id',
+    ];
+
     protected $hidden = [
         'created_at', 'updated_at',
     ];
@@ -23,5 +27,10 @@ class Teacher extends Model
     public function courses()
     {
         return $this->belongsToMany('App\Course', 'teacher_course');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
     }
 }
