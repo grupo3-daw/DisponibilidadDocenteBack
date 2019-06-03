@@ -13,7 +13,9 @@ class AvailabilityController extends Controller
         $availability = new Availability();
         
         $availability->day = $request->day;
-        $availability->hour = $request->hour;
+        $availability->end_time = $request->end_time;
+        $availability->start_time = $request->start_time;
+        $availability->status = $request->status;
         $availability->teacher_id = $request->teacher_id;
 
         $availability->save();
