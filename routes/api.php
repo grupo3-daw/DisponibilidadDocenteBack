@@ -46,5 +46,15 @@ Route::group([
         //Availability
         Route::post('availability/create','AvailabilityController@create');
         Route::get('availability/teacher/get/{id}','AvailabilityController@get');
+        //Faculty
+        Route::get('faculties','FacultyController@list');
+        Route::get('faculty/get/{id}','FacultyController@get');
+        Route::post('faculty/create','FacultyController@create');
+        Route::put('faculty/update/{id}','FacultyController@update');
+        //School
+        Route::get('schools','SchoolController@list');
+        Route::get('school/get/{id}','SchoolController@get');
+        Route::post('school/create','SchoolController@create');
+        Route::put('school/update/{id}','SchoolController@update');
     });
 });
