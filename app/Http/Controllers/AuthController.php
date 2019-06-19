@@ -4,18 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\User;
+use App\Teacher;
+
 class AuthController extends Controller
 {
-    /**
-     * Create user
-     *
-     * @param  [string] name
-     * @param  [string] email
-     * @param  [string] role
-     * @param  [string] password
-     * @param  [string] password_confirmation
-     * @return [string] message
-     */
     public function signup(Request $request)
     {
         $request->validate([
@@ -31,21 +23,22 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
         $user->save();
+
+        if ($user->role_id = 2)
+        {
+            $teacher = new Teacher();
+
+            $teacher->user_id = $user->id;
+            $teacher->category_id = $request->category_id;
+
+            $teacher->save();
+        }
+
         return response()->json([
             'message' => 'Successfully created user!'
         ], 201);
     }
   
-    /**
-     * Login user and create token
-     *
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [boolean] remember_me
-     * @return [string] access_token
-     * @return [string] token_type
-     * @return [string] expires_at
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -53,37 +46,55 @@ class AuthController extends Controller
             'password' => 'required|string',
             'remember_me' => 'boolean'
         ]);
+
         $credentials = request(['email', 'password']);
+
         if(!Auth::attempt($credentials))
             return response()->json([
                 'message' => 'Unauthorized'
             ], 401);
+
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
+
         if ($request->remember_me)
             $token->expires_at = Carbon::now()->addWeeks(1);
-        $token->save();
-        return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'role_id' => $user->role_id,
-            'role_name' => $user->role->name,
 
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => Carbon::parse(
-                $tokenResult->token->expires_at
-            )->toDateTimeString()
-            ],200);
+        $token->save();
+        
+        if ($user->role->id == 1)
+        {
+            return response()->json([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'access_token' => $tokenResult->accessToken,
+                'token_type' => 'Bearer',
+                'expires_at' => Carbon::parse(
+                    $tokenResult->token->expires_at
+                )->toDateTimeString()
+                ],200);
+        }
+        else
+        {
+            return response()->json([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'category' => $user->teacher->category,
+                'access_token' => $tokenResult->accessToken,
+                'token_type' => 'Bearer',
+                'expires_at' => Carbon::parse(
+                    $tokenResult->token->expires_at
+                )->toDateTimeString()
+                ],200);
+        }
+
     }
   
-    /**
-     * Logout user (Revoke the token)
-     *
-     * @return [string] message
-     */
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
@@ -92,22 +103,30 @@ class AuthController extends Controller
         ],200);
     }
   
-    /**
-     * Get the authenticated User
-     *
-     * @return [json] user object
-     */
     public function user(Request $request)
     {
         $user = $request->user();
-        
-        return response()->json([
-            'id' => $request->user()->id,
-            'name' => $request->user()->name,
-            'email' => $request->user()->email,
-            'role_id' => $request->user()->role_id,
-            'role_name' => $request->user()->role->name
-        ], 201);
+
+        if ($user->role->id == 1)
+        {
+            return response()->json([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role
+            ], 201);
+        }
+        else
+        {
+            return response()->json([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'category' => $user->teacher->category
+            ], 201);
+        }
+
     }
    
 }
