@@ -52,7 +52,7 @@ Route::group([
         Route::post('faculty/create','FacultyController@create');
         Route::put('faculty/update/{id}','FacultyController@update');
         //School
-        Route::get('schools','SchoolController@list');
+        Route::get('schools/{id}','SchoolController@list');
         Route::get('school/get/{id}','SchoolController@get');
         Route::post('school/create','SchoolController@create');
         Route::put('school/update/{id}','SchoolController@update');
