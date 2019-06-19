@@ -56,5 +56,11 @@ Route::group([
         Route::get('school/get/{id}','SchoolController@get');
         Route::post('school/create','SchoolController@create');
         Route::put('school/update/{id}','SchoolController@update');
+        //Course
+        Route::get('courses/{id}','CourseController@list');
+        Route::get('course/get/{id}','CourseController@get');
+        Route::post('course/create','CourseController@create');
+        Route::put('course/update/{id}','CourseController@update');
+        Route::post('course/assignTeacher/{id}','CourseController@assignTeacher');
     });
 });
