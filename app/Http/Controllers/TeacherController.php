@@ -22,14 +22,13 @@ class TeacherController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'role_id' => 'required|integer',
             'password' => 'required|string|confirmed',
             'category_id' => 'required',
         ]);
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id,
+            'role_id' => 2,
             'password' => bcrypt($request->password)
         ]);
         $user->save();
