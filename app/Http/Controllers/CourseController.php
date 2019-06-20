@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Course;
+use App\School;
 
 class CourseController extends Controller
 {
@@ -63,6 +64,16 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'OK'
+        ], 201);
+    }
+
+    
+    public function listBySchool($id)
+    {
+        $school = School::find($id);
+
+        return response()->json([
+            'courses' => $school->courses
         ], 201);
     }
 }

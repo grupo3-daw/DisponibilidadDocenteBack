@@ -40,6 +40,8 @@ Route::group([
         Route::put('category/update/{id}','CategoryController@update');
         //Teacher
         Route::get('teachers','TeacherController@list');
+        Route::get('teachers/Category/{id}','TeacherController@listByCategory');
+        Route::get('teachers/Course/{id}','TeacherController@listByCourse');
         Route::get('teacher/get/{id}','TeacherController@get');
         Route::post('teacher/create','TeacherController@create');
         Route::put('teacher/update/{id}','TeacherController@update'); //stand by

@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use App\User;
 use App\Teacher;
+use App\Course;
 
 class TeacherController extends Controller
 {
@@ -86,4 +87,39 @@ class TeacherController extends Controller
             'category_name' => $teacher->category->name
         ], 201);
     }
+
+    public function listByCategory($id)
+    {
+        $teachersCollection = collect([]);
+        $teachers = Teacher::where('category_id',$id)->get();
+
+        foreach ($teachers as $teacher) {
+            $t = [
+                'id' => $teacher->id,
+                'user_id' => $teacher->user->id,
+                'user_name' => $teacher->user->name,
+                'user_email' => $teacher->user->email,
+                'user_role_id' => $teacher->user->role_id,
+                'user_role_name' => $teacher->user->role->name,
+                'category_id' => $teacher->category->id,
+                'category_name' => $teacher->category->name
+            ];
+
+            $teachersCollection->push($t);
+        }
+
+        return response()->json([
+            'teachers' => $teachersCollection
+        ], 201);
+    }
+
+    public function listByCourse($id)
+    {
+        $course = Course::find($id);
+
+        return response()->json([
+            'teachers' => $course->teachers
+        ], 201);
+    }
+
 }
