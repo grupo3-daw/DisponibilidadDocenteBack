@@ -5,75 +5,33 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Course;
 use App\School;
+use App\Curso;
 
 class CourseController extends Controller
 {
-    public function list($id)
+    public function getCourses(Request $request)
     {
-        $courses = Course::where("school_id",$id)->get();
+        if($request->nombre && $request->nombre != '')
+        {
+            $cursos = Curso::where('nombrecurso','LIKE','%'. $request->nombre .'%')->get();
+        }
+        else
+        {
+            $cursos = Curso::all();
+        }
 
         return response()->json([
-            'courses' => $courses
+            'cursos' => $cursos
         ], 201);
     }
 
-    public function create(Request $request)
+    //NO USAR
+    public function getCourseById($id)
     {
-        $course = new Course();
-
-        $course->name = $request->name;
-        $course->school_id = $request->school_id;
-        $course->hours = $request->hours;
-
-        $course->save();
-
+        $curso = Curso::where('id',$id)->with('profesores')->first();
+        //Incluir profesores que escogieron ese curso
         return response()->json([
-            'message' => 'Successfully created course!'
-        ], 201);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $course = Course::find($id);
-
-        $course->name = $request->name;
-        $course->school_id = $request->school_id;
-        $course->hours = $request->hours;
-
-        $course->update();
-
-        return response()->json([
-            'message' => 'Successfully updated course!'
-        ], 201);
-    }
-
-    public function get($id)
-    {
-        $course = Course::find($id);
-
-        return response()->json([
-            'course' => $course
-        ], 201);
-    }
-
-    public function assignTeacher(Request $request, $id)
-    {
-        $course = Course::find($id);
-
-        $course->teachers()->attach($request->teacher_id);
-
-        return response()->json([
-            'message' => 'OK'
-        ], 201);
-    }
-
-    
-    public function listBySchool($id)
-    {
-        $school = School::find($id);
-
-        return response()->json([
-            'courses' => $school->courses
+            'curso' => $curso
         ], 201);
     }
 }

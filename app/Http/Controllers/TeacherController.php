@@ -4,122 +4,87 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
-use App\User;
-use App\Teacher;
-use App\Course;
+use Illuminate\Support\Facades\DB;
+use App\Profesor;
+use App\Curso;
 
 class TeacherController extends Controller
 {
-    /** 
-     * Eliminar a un profesor por id
-     */
-    public function delteacher(Request $request)
+    public function getTeachers(Request $request)
     {
-        $deletedRows = App\Flight::where('id', request)->delete();
-    }
-
-    public function create(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed',
-            'category_id' => 'required',
-        ]);
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role_id' => 2,
-            'password' => bcrypt($request->password)
-        ]);
-        $user->save();
-        
-        $teacher = new Teacher([
-            'user_id' => $user->id,
-            'category_id' => $request->category_id
-        ]);
-        
-        $teacher->save();
-
-        return response()->json([
-            'message' => 'Successfully created teacher!'
-        ], 201);
-    }
-
-    public function list()
-    {
-        $teachersCollection = collect([]);
-
-        $teachers = Teacher::all();
-
-        foreach ($teachers as $teacher) {
-            $t = [
-                'id' => $teacher->id,
-                'user_id' => $teacher->user->id,
-                'user_name' => $teacher->user->name,
-                'user_email' => $teacher->user->email,
-                'user_role_id' => $teacher->user->role_id,
-                'user_role_name' => $teacher->user->role->name,
-                'category_id' => $teacher->category->id,
-                'category_name' => $teacher->category->name
-            ];
-
-            $teachersCollection->push($t);
+        if($request->nombre && $request->nombre != '')
+        {
+            $profesores = Profesor::where('nombre','LIKE','%'+ $request->nombre +'%')->orWhere('appaterno','LIKE','%'+ $request->nombre +'%')->orWhere('appmaterno','LIKE','%'+ $request->nombre +'%')->get();
+        }
+        else
+        {
+            $profesores = Profesor::all();
         }
 
         return response()->json([
-            'teachers' => $teachersCollection
+            'profesores' => $profesores
         ], 201);
     }
 
-    public function get($id)
+    public function getTeacherById($id)
     {
-        $teacher = Teacher::find($id);
-        
+        $profesor = Profesor::where('id',$id)->with('categoria','cursos','disponibilidades')->first();
+        //Incluir categoria, cursos y disponibilidad
         return response()->json([
-            'id' => $teacher->id,
-            'user_id' => $teacher->user->id,
-            'user_name' => $teacher->user->name,
-            'user_email' => $teacher->user->email,
-            'user_role_id' => $teacher->user->role_id,
-            'user_role_name' => $teacher->user->role->name,
-            'category_id' => $teacher->category->id,
-            'category_name' => $teacher->category->name
+            'profesor' => $profesor
         ], 201);
     }
 
-    public function listByCategory($id)
+    public function postTeacherCourses(Request $request, $id)
     {
-        $teachersCollection = collect([]);
-        $teachers = Teacher::where('category_id',$id)->get();
+        $profesor = Profesor::find($id);
 
-        foreach ($teachers as $teacher) {
-            $t = [
-                'id' => $teacher->id,
-                'user_id' => $teacher->user->id,
-                'user_name' => $teacher->user->name,
-                'user_email' => $teacher->user->email,
-                'user_role_id' => $teacher->user->role_id,
-                'user_role_name' => $teacher->user->role->name,
-                'category_id' => $teacher->category->id,
-                'category_name' => $teacher->category->name
-            ];
-
-            $teachersCollection->push($t);
+        if(count($request->cursos) != 4 )
+        {
+            return response()->json([
+                'WrongNumberCourses' => 'Debe seleccionar 4 cursos.'
+            ], 404);
         }
 
+        foreach ($request->cursos as $curso_id) {
+            $profesor->cursos()->attach($curso_id);
+        }
+
+        $profesor->permiso = 0;
+            
+        $profesor->update();
+
         return response()->json([
-            'teachers' => $teachersCollection
-        ], 201);
+              'mensaje' => 'Cursos registrados'
+               ], 201);
     }
 
-    public function listByCourse($id)
+
+    public function putTeacherCourses(Request $request, $id)
     {
-        $course = Course::find($id);
+        $profesor = Profesor::find($id);
+
+        if(count($request->cursos) != 4 )
+        {
+            return response()->json([
+                'WrongNumberCourses' => 'Debe seleccionar 4 cursos.'
+            ], 404);
+        }
+
+        DB::table('curso_profesor')->where('profesor_id', $id)->delete();
+
+        foreach ($request->cursos as $curso_id) {
+            $profesor->cursos()->attach($curso_id);
+        }
+
+        $profesor->permiso = 0;
+            
+        $profesor->update();
 
         return response()->json([
-            'teachers' => $course->teachers
-        ], 201);
+              'mensaje' => 'Cursos actualizados'
+               ], 201);
     }
+
 
 }
