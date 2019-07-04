@@ -28,7 +28,7 @@ class TeacherController extends Controller
 
     public function getTeacherById($id)
     {
-        $profesor = Profesor::where('id',$id)->with('categoria','cursos','disponibilidades')->first();
+        $profesor = Profesor::where('id',$id)->with('categoria','cursos','disponibilidades','permiso')->first();
         //Incluir categoria, cursos y disponibilidad
         return response()->json([
             'profesor' => $profesor

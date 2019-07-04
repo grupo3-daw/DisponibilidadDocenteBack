@@ -22,4 +22,9 @@ class Profesor extends Model
     {
         return $this->hasMany('App\Disponibilidad');
     }
+
+    public function permiso()
+    {
+        return $this->hasOne('App\Permiso');
+    }
 }
