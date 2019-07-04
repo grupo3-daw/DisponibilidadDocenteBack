@@ -29,3 +29,5 @@ Route::post('cursos','CourseController@getCourses');
 Route::get('cursos/{id}','CourseController@getCourseById');
 Route::post('profesores/{id}/permiso','PermissionController@requestPermission');
 Route::patch('profesores/{id}/permiso/{idsolicitud}','PermissionController@approvePermission');
+Route::get('profesores/{id}/categoria','TeacherController@getTeachersByCategory');
+Route::get('categorias','CategoryController@lista');

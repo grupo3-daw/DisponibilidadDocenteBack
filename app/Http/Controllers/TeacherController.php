@@ -86,5 +86,13 @@ class TeacherController extends Controller
                ], 201);
     }
 
+    public function getTeachersByCategory($id)
+    {
+        $profesores = Profesor::where('categoria_id',$id)->get();
+
+        return response()->json([
+            'profesores' => $profesores
+             ], 201);
+    }
 
 }
