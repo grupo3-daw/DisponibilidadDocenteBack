@@ -11,8 +11,8 @@ class PermissionController extends Controller
     public function requestPermission(Request $request, $id)
     {
         $profesor = Profesor::find($id);
-        
-        if($profesor->permiso == 1)
+
+        if($profesor->permiso == 3)
         {
             return response()->json([
                 'NotAllowed' => 'El usuario ya tiene permiso para editar.'
@@ -28,6 +28,8 @@ class PermissionController extends Controller
                 return response()->json([
                     'NotAllowed' => 'El usuario ya tiene permiso para editar.'
                      ], 400);
+            } else {
+                $permiso->delete();
             }
         }
 
@@ -38,6 +40,8 @@ class PermissionController extends Controller
         $permiso2->motivo = '';
 
         $permiso2->save();
+        $profesor->permiso = 2;
+        $profesor->update();
 
         return response()->json([
             'mensaje' => 'Solicitud enviada.'
@@ -63,7 +67,7 @@ class PermissionController extends Controller
                 $permiso->estado = 'APROBADO';
                 $permiso->update();
 
-                $profesor->permiso = 1;
+                $profesor->permiso = 3;
                 $profesor->update();
 
                 return response()->json([
@@ -74,11 +78,13 @@ class PermissionController extends Controller
                 $permiso->estado = 'RECHAZADO';
                 $permiso->motivo = $request->motivo;
                 $permiso->update();
+                $profesor->permiso = 4;
+                $profesor->update();
 
                 return response()->json([
                     'mensaje' => 'La solicitud fue rechazada.'
                      ], 201);
-            
+
             default:
                 return response()->json([
                     'StatusNotAllowed' => 'Ingrese un estado valido.'

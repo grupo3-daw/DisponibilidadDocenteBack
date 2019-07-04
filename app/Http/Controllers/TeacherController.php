@@ -26,6 +26,13 @@ class TeacherController extends Controller
         ], 201);
     }
 
+    public function getTeachersDetalle() {
+        $profesores = Profesor::with('categoria','cursos','disponibilidades','permisoObject')->get();
+        return response()->json([
+            'profesores' => $profesores
+        ], 201);
+    }
+
     public function getTeacherById($id)
     {
         $profesor = Profesor::where('id',$id)->with('categoria','cursos','disponibilidades','permisoObject')->first();
@@ -50,8 +57,8 @@ class TeacherController extends Controller
             $profesor->cursos()->attach($curso_id);
         }
 
-        $profesor->permiso = 0;
-            
+        $profesor->permiso = 1;
+
         $profesor->update();
 
         return response()->json([
@@ -77,8 +84,8 @@ class TeacherController extends Controller
             $profesor->cursos()->attach($curso_id);
         }
 
-        $profesor->permiso = 0;
-            
+        $profesor->permiso = 1;
+
         $profesor->update();
 
         return response()->json([

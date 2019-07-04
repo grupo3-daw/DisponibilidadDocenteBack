@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Rutas a usar
 Route::post('login','SesionController@login');
 Route::get('profesores','TeacherController@getTeachers');
+Route::get('profesores/detalle',"TeacherController@getTeachersDetalle");
 Route::get('profesores/{id}','TeacherController@getTeacherById');
 Route::post('profesores/{id}/disponibilidad','AvailabilityController@postAvailability');
 Route::put('profesores/{id}/disponibilidad','AvailabilityController@putAvailability');

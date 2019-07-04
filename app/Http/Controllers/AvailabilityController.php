@@ -23,7 +23,7 @@ class AvailabilityController extends Controller
             ], 404);
         }
 
-        for ($i=0; $i < $n ; $i++) { 
+        for ($i=0; $i < $n ; $i++) {
             $disponibilidad = new Disponibilidad();
 
             $day = $request->dia[$i];
@@ -36,7 +36,7 @@ class AvailabilityController extends Controller
             $disponibilidad->save();
         }
 
-        $profesor->permiso = 0;
+        $profesor->permiso = 1;
 
         $profesor->update();
 
@@ -45,7 +45,7 @@ class AvailabilityController extends Controller
         ], 201);
     }
 
-    
+
     public function putAvailability(Request $request, $id)
     {
         $profesor = Profesor::find($id);
@@ -55,7 +55,7 @@ class AvailabilityController extends Controller
         switch ($validate) {
             case 1:
                 return response()->json(['WrongHoursAndDaysNumber' => 'La cantidad de días no concuerda con las horas seleccionadas'], 404);
-            
+
             case 2:
                 return response()->json(['WrongHoursNumber' => 'Debe seleccionar por lo menos 2 horas por día'], 404);
 
@@ -71,21 +71,21 @@ class AvailabilityController extends Controller
 
                 $n = count($request->dia);
 
-                for ($i=0; $i < $n ; $i++) { 
+                for ($i=0; $i < $n ; $i++) {
                     $disponibilidad = new Disponibilidad();
-                
+
                     $day = $request->dia[$i];
                     $hours = implode(',' , $request->horas[$i]);
-                
+
                     $disponibilidad->profesor_id = $id;
                     $disponibilidad->dia = $day;
                     $disponibilidad->horas = $hours;
-                
+
                     $disponibilidad->save();
                 }
-            
-                $profesor->permiso = 0;
-            
+
+                $profesor->permiso = 1;
+
                 $profesor->update();
 
                 return response()->json([
@@ -101,7 +101,7 @@ class AvailabilityController extends Controller
         if(count($days) != count($hours))
         {
             return 1; //DIFERENTES
-        } 
+        }
 
         foreach ($hours as $element) {
             if(count($element) < 2)
@@ -112,12 +112,12 @@ class AvailabilityController extends Controller
             $totalHours += count($element);
         }
 
-        if($totalHours < $min_hours) 
+        if($totalHours < $min_hours)
         {
             return 3; //MAS
         }
 
-        if($totalHours > $max_hours) 
+        if($totalHours > $max_hours)
         {
             return 4; //MENOS
         }
