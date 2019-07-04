@@ -23,7 +23,7 @@ class Profesor extends Model
         return $this->hasMany('App\Disponibilidad');
     }
 
-    public function permiso()
+    public function permisoObject()
     {
         return $this->hasOne('App\Permiso');
     }
